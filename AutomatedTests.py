@@ -1,13 +1,33 @@
-#Replace the paths with the proper paths
-read_distance_scene = r"C:\Users\timmonse\Desktop\ReadDistanceStudy\VR Read Distance Study.exe"
-foveated_scene = r"C:\Users\timmonse\Documents\Code\Python\GitInsidePy\AutomatedVRStudy\test2Ex.exe"
-generator_scene = r"C:\Users\timmonse\Documents\Code\Python\GitInsidePy\AutomatedVRStudy\test3Ex.exe"
-
-#DELETE ME just used for testing
-# chrome_exe = r"C:\Users\timmonse\Documents\Code\Python\GitInsidePy\AutomatedVRStudy\ChromeTest.lnk"
-
-# import os 
-# os.startfile(chrome_exe)
-
 from subprocess import call
-call([read_distance_scene])
+import random
+import psutil  
+
+#Replace the paths with the proper paths
+read_distance_scene = "VR Read Distance Study.exe"
+foveated_scene = "test2Ex.exe"
+generator_scene = "test3Ex.exe"
+
+folder_path = "C:\\Users\\timmonse\\Desktop\\ReadDistanceStudy\\"
+
+read_distance_path = folder_path + read_distance_scene
+foveated_path = folder_path + foveated_scene
+generator_path = folder_path + generator_scene
+
+scene_list = []
+scene_list.append(read_distance_scene)
+scene_list.append(foveated_scene)
+scene_list.append(generator_scene)
+
+#Randomly choose the order to open the scenes and then open them
+for i in range(3):
+    rand_limit = 2 - i
+    rand_scene_pos = random.randint(0,rand_limit)
+
+	#Open the scene
+    call([folder_path + scene_list[rand_scene_pos]])
+    while(scene_list[rand_scene_pos] in (p.name() for p in psutil.process_iter())):
+        #stay in this loop until the exe has been closed
+        continue
+    del scene_list[rand_scene_pos]
+    
+    
