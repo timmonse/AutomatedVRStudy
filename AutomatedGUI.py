@@ -1,6 +1,6 @@
 # File:          AutomatedGUI.py
 # Author:        Evan Timmons
-# Date:          10/15/2019
+# Date:          10/17/2019
 # ISU Email:     timmonse@iastate.edu
 # Description:   This program automates the study process for the 2019 ARLAB user study
 
@@ -48,23 +48,23 @@ layout = [
 	 sg.InputText("C:\\Users\\timmonse\\Desktop\\ReadDistanceStudy\\VR Read Distance Study.exe"), sg.FileBrowse()],
 	 
 	#FIX ME ADD NAME OF FOLDER and change the paths
-	[sg.Text('Supriya Study 1', size=(35, 1))],      
+	[sg.Text('Non Foveated Rendering', size=(35, 1))],      
 	[sg.Text('Your File', size=(15, 1), auto_size_text=False, justification='right'),      
-	 sg.InputText("C:\\Users\\timmonse\\Desktop\\ReadDistanceStudy\\VR Read Distance Study.exe"), sg.FileBrowse()],
+	 sg.InputText("C:\\Users\\timmonse\\Desktop\\User Study Engine Room Builds\\NonFRBuild\\NonFRBuild.exe"), sg.FileBrowse()],
 	 
-	[sg.Text('Supriya Study 2', size=(35, 1))],      
+	[sg.Text('Two Layer', size=(35, 1))],      
 	[sg.Text('Your File', size=(15, 1), auto_size_text=False, justification='right'),      
-	 sg.InputText("C:\\Users\\timmonse\\Desktop\\ReadDistanceStudy\\VR Read Distance Study.exe"), sg.FileBrowse()],
+	 sg.InputText("C:\\Users\\timmonse\\Desktop\\User Study Engine Room Builds\\ThreeLayerBuild\\ThreeLayerBuild.exe"), sg.FileBrowse()],
 	 
-	[sg.Text('Supriya Study 3', size=(35, 1))],      
+	[sg.Text('Three Layer', size=(35, 1))],      
 	[sg.Text('Your File', size=(15, 1), auto_size_text=False, justification='right'),      
-	 sg.InputText("C:\\Users\\timmonse\\Desktop\\ReadDistanceStudy\\VR Read Distance Study.exe"), sg.FileBrowse()],
+	 sg.InputText("C:\\Users\\timmonse\Desktop\\User Study Engine Room Builds\\TwoLayerBuild\\TwoLayerBuild.exe"), sg.FileBrowse()],
 	 
 	 [sg.Text('_'  * 80)], 
 	 
     [sg.Text('Output Folder', size=(35, 1))],      
     [sg.Text('Your Folder', size=(15, 1), auto_size_text=False, justification='right'),      
-	 sg.InputText("C:\\Users\\timmonse\\Desktop\\testOutput\\"), sg.FolderBrowse()],
+	 sg.InputText("C:\\Users\\timmonse\\Desktop\\User Study Engine Room Builds\\Output\\"), sg.FolderBrowse()],
 	 
 	
 	[sg.Text('_'  * 80)], 
@@ -89,30 +89,36 @@ elif ((event == 'Submit') and ((values[2] == "Example: U0001") or (values[1] == 
 
 admin_name = values[1]
 user_ID = values[2]
-read_distance_path = values[3]
-scene_1_path = values[4]
-scene_2_path = values[5]
-scene_3_path = values[6]
+read_distance_filepath = values[3]
+NonFRBuild_filepath = values[4]
+TwoLayerBuild_filepath = values[5]
+ThreeLayerBuild_filepath = values[6]
+
 output_path = values[7]
 
-read_distance_file = os.path.basename(read_distance_path) 
-scene_1_file = os.path.basename(scene_1_path) 
-scene_2_file = os.path.basename(scene_2_path) 
-scene_3_file = os.path.basename(scene_3_path) 
+read_distance_file = os.path.basename(read_distance_filepath) 
+NonFRBuild_file = os.path.basename(NonFRBuild_filepath) 
+TwoLayerBuild_file = os.path.basename(TwoLayerBuild_filepath) 
+ThreeLayerBuild_file = os.path.basename(ThreeLayerBuild_filepath) 
+
+read_distance_path = read_distance_filepath.replace(read_distance_file,"")
+NonFRBuild_path = NonFRBuild_filepath.replace(NonFRBuild_file,"")
+TwoLayerBuild_path = TwoLayerBuild_filepath.replace(TwoLayerBuild_file,"")
+ThreeLayerBuild_path = ThreeLayerBuild_filepath.replace(ThreeLayerBuild_file,"")
 	
 #Test variables DELETE ME
 print(admin_name)
 print(user_ID)
-print(read_distance_path)
-print(scene_1_path)
-print(scene_2_path)
-print(scene_3_path)
+print(read_distance_filepath)
+print(NonFRBuild_filepath)
+print(TwoLayerBuild_filepath)
+print(ThreeLayerBuild_filepath)
 print(output_path)
 
 print(read_distance_file)
-print(scene_1_file)
-print(scene_2_file)
-print(scene_3_file)
+print(NonFRBuild_file)
+print(TwoLayerBuild_file)
+print(ThreeLayerBuild_file)
 
 #Save the start time to record the length of the full study
 full_study_start_time = time.time()
@@ -121,7 +127,7 @@ full_study_start_time = time.time()
 #Time Read Distance Scene
 read_distance_start_time = time.time()
 #Open read distance scene and stay until close
-call(read_distance_path)
+call(read_distance_filepath)
 while(read_distance_file in (p.name() for p in psutil.process_iter())):
     #stay in this loop until the exe has been closed
     continue
@@ -134,17 +140,19 @@ read_distance_time = round(read_distance_time, 2)
 
 
 path_list = []
-path_list.append(scene_1_path)
-path_list.append(scene_2_path)
-path_list.append(scene_3_path)
+path_list.append(NonFRBuild_filepath)
+path_list.append(TwoLayerBuild_filepath)
+path_list.append(ThreeLayerBuild_filepath)
 
 file_list = []
-file_list.append(scene_1_file)
-file_list.append(scene_2_file)
-file_list.append(scene_3_file)
+file_list.append(NonFRBuild_file)
+file_list.append(TwoLayerBuild_file)
+file_list.append(ThreeLayerBuild_file)
   
 #List to save the run times of each program
 time_list = [None] * 3
+
+scene_order = ""
 
 #Run the three scenes in a random order
 for i in range(3):
@@ -171,10 +179,13 @@ for i in range(3):
     scene_time = time.time() - scene_start_time
     scene_time = round(scene_time, 2)
 	
+	#Save the ordering of the scenes
+    scene_order +=  file_list[rand_scene_pos][:-4] + ", "
+	
 	#Fill the time array with the times associated with the proper scenes
-    if(file_list[rand_scene_pos] == scene_1_file):
+    if(file_list[rand_scene_pos] == NonFRBuild_file):
 	    time_list[0] = scene_time
-    elif(file_list[rand_scene_pos] == scene_2_file):
+    elif(file_list[rand_scene_pos] == TwoLayerBuild_file):
         time_list[1] = scene_time
     else:
         time_list[2] = scene_time
@@ -194,25 +205,25 @@ now = datetime.datetime.now()
 date = now.strftime("%Y-%m-%d")
 
 #Create new file to store information about the researcher and times
-#FIXME Change the scene 1 time, scene 2 time etc to the names of the scenes
+#FIXME Change the NonFRBuild time, TwoLayerBuild time etc to the names of the scenes
 with open(output_path + user_ID + "_main" + ".csv", mode='w', newline='') as output_file:
     output_writer = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-    output_writer.writerow(['Participant UserID', 'Study Admin', 'Date', 'Read Distance Time', 'Scene 1 Time', 'Scene 2 Time', 'Scene 3 Time', 'Full Study Time'])
-    output_writer.writerow([user_ID, admin_name, date, read_distance_time, time_list[0], time_list[1], time_list[2], full_study_time])
+    output_writer.writerow(['Participant UserID', 'Study Admin', 'Date', 'Scene Order', 'Read Distance Time', 'NonFRBuild Time', 'TwoLayerBuild Time', 'ThreeLayerBuild Time', 'Full Study Time'])
+    output_writer.writerow([user_ID, admin_name, date, scene_order, read_distance_time, time_list[0], time_list[1], time_list[2], full_study_time])
 	
 #Remove the .exe from the path names
 read_distance_file = read_distance_file[:-4]
-scene_1_file = scene_1_file[:-4]
-scene_2_file = scene_2_file[:-4]
-scene_3_file = scene_3_file[:-4]
+NonFRBuild_file = NonFRBuild_file[:-4]
+TwoLayerBuild_file = TwoLayerBuild_file[:-4]
+ThreeLayerBuild_file = ThreeLayerBuild_file[:-4]
 	
-#Rename the created files with the new names
+#Rename the created files with the new names and move them to the output folder
 #FIX ME add a check to see if files exist 
 os.rename(os.path.join(output_path, read_distance_file + '.csv'), os.path.join(output_path, user_ID + '_' + read_distance_file + '.csv'))
-os.rename(os.path.join(output_path, scene_1_file + '.csv'), os.path.join(output_path, user_ID + '_' + scene_1_file + '.csv'))
-os.rename(os.path.join(output_path, scene_2_file + '.csv'), os.path.join(output_path, user_ID + '_' + scene_2_file + '.csv'))
-os.rename(os.path.join(output_path, scene_3_file + '.csv'), os.path.join(output_path, user_ID + '_' + scene_3_file + '.csv'))
+os.rename(os.path.join(NonFRBuild_path, NonFRBuild_file + '.txt'), os.path.join(output_path, user_ID + '_' + NonFRBuild_file + '.txt'))
+os.rename(os.path.join(TwoLayerBuild_path, TwoLayerBuild_file + '.txt'), os.path.join(output_path, user_ID + '_' + TwoLayerBuild_file + '.txt'))
+os.rename(os.path.join(ThreeLayerBuild_path, ThreeLayerBuild_file + '.txt'), os.path.join(output_path, user_ID + '_' + ThreeLayerBuild_file + '.txt'))
 
 	
 	
