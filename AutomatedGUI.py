@@ -14,6 +14,7 @@ import time
 import sys
 import datetime
 import os
+import shutil
 
 sg.ChangeLookAndFeel('SystemDefault')      
 
@@ -45,26 +46,26 @@ layout = [
 	
 	[sg.Text('Read Distance Study', size=(35, 1))],      
 	[sg.Text('Your File', size=(15, 1), auto_size_text=False, justification='right'),      
-	 sg.InputText("C:\\Users\\timmonse\\Desktop\\ReadDistanceStudy\\VR Read Distance Study.exe"), sg.FileBrowse()],
+	 sg.InputText("C:\\UserStudyMain\\ReadDistanceBuild\\ReadDistanceBuild.exe"), sg.FileBrowse()],
 	 
 	#FIX ME ADD NAME OF FOLDER and change the paths
 	[sg.Text('Non Foveated Rendering', size=(35, 1))],      
 	[sg.Text('Your File', size=(15, 1), auto_size_text=False, justification='right'),      
-	 sg.InputText("C:\\Users\\timmonse\\Desktop\\User Study Engine Room Builds\\NonFRBuild\\NonFRBuild.exe"), sg.FileBrowse()],
+	 sg.InputText("C:\\UserStudyMain\\NonFRBuild\\NonFRBuild.exe"), sg.FileBrowse()],
 	 
 	[sg.Text('Two Layer', size=(35, 1))],      
 	[sg.Text('Your File', size=(15, 1), auto_size_text=False, justification='right'),      
-	 sg.InputText("C:\\Users\\timmonse\\Desktop\\User Study Engine Room Builds\\ThreeLayerBuild\\ThreeLayerBuild.exe"), sg.FileBrowse()],
+	 sg.InputText("C:\\UserStudyMain\\ThreeLayerBuild\\ThreeLayerBuild.exe"), sg.FileBrowse()],
 	 
 	[sg.Text('Three Layer', size=(35, 1))],      
 	[sg.Text('Your File', size=(15, 1), auto_size_text=False, justification='right'),      
-	 sg.InputText("C:\\Users\\timmonse\Desktop\\User Study Engine Room Builds\\TwoLayerBuild\\TwoLayerBuild.exe"), sg.FileBrowse()],
+	 sg.InputText("C:\\UserStudyMain\\TwoLayerBuild\\TwoLayerBuild.exe"), sg.FileBrowse()],
 	 
 	 [sg.Text('_'  * 80)], 
 	 
     [sg.Text('Output Folder', size=(35, 1))],      
     [sg.Text('Your Folder', size=(15, 1), auto_size_text=False, justification='right'),      
-	 sg.InputText("C:\\Users\\timmonse\\Desktop\\User Study Engine Room Builds\\Output\\"), sg.FolderBrowse()],
+	 sg.InputText("C:\\UserStudyMain\\Output\\"), sg.FolderBrowse()],
 	 
 	
 	[sg.Text('_'  * 80)], 
@@ -107,18 +108,20 @@ TwoLayerBuild_path = TwoLayerBuild_filepath.replace(TwoLayerBuild_file,"")
 ThreeLayerBuild_path = ThreeLayerBuild_filepath.replace(ThreeLayerBuild_file,"")
 	
 #Test variables DELETE ME
-print(admin_name)
-print(user_ID)
-print(read_distance_filepath)
-print(NonFRBuild_filepath)
-print(TwoLayerBuild_filepath)
-print(ThreeLayerBuild_filepath)
-print(output_path)
+# print(admin_name)
+# print(user_ID)
+# print(read_distance_filepath)
+# print(NonFRBuild_filepath)
+# print(TwoLayerBuild_filepath)
+# print(ThreeLayerBuild_filepath)
+# print(output_path)
 
-print(read_distance_file)
-print(NonFRBuild_file)
-print(TwoLayerBuild_file)
-print(ThreeLayerBuild_file)
+# print(read_distance_file)
+# print(NonFRBuild_file)
+# print(TwoLayerBuild_file)
+# print(ThreeLayerBuild_file)
+
+#print(read_distance_path)
 
 #Save the start time to record the length of the full study
 full_study_start_time = time.time()
@@ -210,7 +213,7 @@ with open(output_path + user_ID + "_main" + ".csv", mode='w', newline='') as out
     output_writer = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
     output_writer.writerow(['Participant UserID', 'Study Admin', 'Date', 'Scene Order', 'Read Distance Time', 'NonFRBuild Time', 'TwoLayerBuild Time', 'ThreeLayerBuild Time', 'Full Study Time'])
-    output_writer.writerow([user_ID, admin_name, date, scene_order, read_distance_time, time_list[0], time_list[1], time_list[2], full_study_time])
+    output_writer.writerow([user_ID, admin_name, date, 'Read Distance Scene,' + scene_order, read_distance_time, time_list[0], time_list[1], time_list[2], full_study_time])
 	
 #Remove the .exe from the path names
 read_distance_file = read_distance_file[:-4]
@@ -220,10 +223,14 @@ ThreeLayerBuild_file = ThreeLayerBuild_file[:-4]
 	
 #Rename the created files with the new names and move them to the output folder
 #FIX ME add a check to see if files exist 
-os.rename(os.path.join(output_path, read_distance_file + '.csv'), os.path.join(output_path, user_ID + '_' + read_distance_file + '.csv'))
-os.rename(os.path.join(NonFRBuild_path, NonFRBuild_file + '.txt'), os.path.join(output_path, user_ID + '_' + NonFRBuild_file + '.txt'))
-os.rename(os.path.join(TwoLayerBuild_path, TwoLayerBuild_file + '.txt'), os.path.join(output_path, user_ID + '_' + TwoLayerBuild_file + '.txt'))
-os.rename(os.path.join(ThreeLayerBuild_path, ThreeLayerBuild_file + '.txt'), os.path.join(output_path, user_ID + '_' + ThreeLayerBuild_file + '.txt'))
+os.rename(os.path.join(read_distance_path, "ReadDistanceBuild_Data\\output\\" + read_distance_file + '.csv'), os.path.join(output_path, user_ID + '_' + read_distance_file + '.csv'))
+# os.rename(os.path.join(NonFRBuild_path, NonFRBuild_file + '.txt'), os.path.join(output_path, user_ID + '_' + NonFRBuild_file + '.txt'))
+# os.rename(os.path.join(TwoLayerBuild_path, TwoLayerBuild_file + '.txt'), os.path.join(output_path, user_ID + '_' + TwoLayerBuild_file + '.txt'))
+# os.rename(os.path.join(ThreeLayerBuild_path, ThreeLayerBuild_file + '.txt'), os.path.join(output_path, user_ID + '_' + ThreeLayerBuild_file + '.txt'))
+
+shutil.copy(os.path.join(NonFRBuild_path, NonFRBuild_file + '.txt'), os.path.join(output_path, user_ID + '_' + NonFRBuild_file + '.txt'))
+shutil.copy(os.path.join(TwoLayerBuild_path, TwoLayerBuild_file + '.txt'), os.path.join(output_path, user_ID + '_' + TwoLayerBuild_file + '.txt'))
+shutil.copy(os.path.join(ThreeLayerBuild_path, ThreeLayerBuild_file + '.txt'), os.path.join(output_path, user_ID + '_' + ThreeLayerBuild_file + '.txt'))
 
 	
 	
