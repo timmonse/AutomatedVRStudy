@@ -34,21 +34,21 @@ column1 = [[sg.Text('Column 1', background_color='#F7F3EC', justification='cente
 		   
 def buttonR1():
     global selectedButton
-    selectedButton = 'One'
+    selectedButton = 'one'
     window.Element('Radius One').Update(button_color=('white', 'black'))
     window.Element('Radius Two').Update(button_color=('white', 'midnightblue'))
     window.Element('Radius Three').Update(button_color=('white', 'midnightblue'))
 
 def buttonR2():
     global selectedButton
-    selectedButton = 'Two'	
+    selectedButton = 'two'	
     window.Element('Radius One').Update(button_color=('white', 'midnightblue'))
     window.Element('Radius Two').Update(button_color=('white', 'black'))
     window.Element('Radius Three').Update(button_color=('white', 'midnightblue'))
 
 def buttonR3():
     global selectedButton
-    selectedButton = 'Three'
+    selectedButton = 'three'
     window.Element('Radius One').Update(button_color=('white', 'midnightblue'))
     window.Element('Radius Two').Update(button_color=('white', 'midnightblue'))
     window.Element('Radius Three').Update(button_color=('white', 'black'))
@@ -128,7 +128,6 @@ while True:
             wait(3)
         except:
             pass
-    print(selectedButton)
 
 
 sg.PopupOK("You selected Radius " + selectedButton) 
@@ -155,27 +154,32 @@ read_distance_path = read_distance_filepath.replace(read_distance_file,"")
 NonFRBuild_path = NonFRBuild_filepath.replace(NonFRBuild_file,"")
 R1FR_path = R1FR_filepath.replace(R1FR_file,"")
 R2FR_path = R2FR_filepath.replace(R2FR_file,"")
-R3FR_path = R2FR_filepath.replace(R3FR_file,"")
+R3FR_path = R3FR_filepath.replace(R3FR_file,"")
 
+#Remove the .exe from the path names
+read_distance_filebare = read_distance_file[:-4]
+NonFRBuild_filebare = NonFRBuild_file[:-4]
+R1FR_filebare = R1FR_file[:-4]
+R2FR_filebare = R2FR_file[:-4]
+R3FR_filebare = R3FR_file[:-4]
 
+# Test variables DELETE ME
+# print("admin_name " + admin_name)
+# print(user_ID)
+# print(read_distance_filepath)
+# print(NonFRBuild_filepath)
+# print(R1FR_filepath)
+# print(R2FR_filepath)
+# print(R3FR_filepath)
+# print(output_path)
 
-#Test variables DELETE ME
-print("admin_name " + admin_name)
-print(user_ID)
-print(read_distance_filepath)
-print(NonFRBuild_filepath)
-print(R1FR_filepath)
-print(R2FR_filepath)
-print(R3FR_filepath)
-print(output_path)
+# print(read_distance_file)
+# print(NonFRBuild_file)
+# print(R1FR_file)
+# print(R2FR_file)
+# print(R3FR_file)
 
-print(read_distance_file)
-print(NonFRBuild_file)
-print(R1FR_file)
-print(R2FR_file)
-print(R3FR_file)
-
-print("read_distance_path " + read_distance_path)
+#print("read_distance_path " + read_distance_path)
 
 #Save the start time to record the length of the full study
 full_study_start_time = time.time()
@@ -231,13 +235,17 @@ elif(selectedButton == 'three'):
 #Choose random order for scenes
 random.shuffle(scene_stack)
 
+print("PRINTING THE STACK BELOW")
+print(scene_stack)
+
 #Run until the scene stack is empty
 #The stack is shuffled so the scenes will run in random order
 while scene_stack:
     scene_start_time = None
     scene_time = None
 	
-    current_scene_file = scene_stack.pop
+    current_scene_file = scene_stack.pop()
+    print(current_scene_file)
     if(current_scene_file == NonFRBuild_file):
         current_scene_filepath = NonFRBuild_filepath
     elif(current_scene_file == R1FR_file):
@@ -247,6 +255,7 @@ while scene_stack:
     elif(current_scene_file == R3FR_file):
         current_scene_filepath = R3FR_filepath
 	
+    scene_start_time = time.time()
 	
     call(current_scene_filepath)
     while(current_scene_file in (p.name() for p in psutil.process_iter())):
@@ -259,7 +268,49 @@ while scene_stack:
 	
 	#Save the ordering of the scenes
     scene_order +=  current_scene_file[:-4] + ", "
-    time_list.append(scene_time)
+	
+	#Create an ordered time list that can be read to the main csv
+    if((current_scene_file == R1FR_file) or (current_scene_file == R2FR_file) or (current_scene_file == R3FR_file)):
+        #Set the name for the task completetion time file
+        if(current_scene_file == R1FR_file):
+            file_FR = open(os.path.join(R1FR_path, R1FR_filebare + '_TasksCompletionTime.txt'))
+        elif(current_scene_file == R2FR_file):
+            file_FR = open(os.path.join(R2FR_path, R2FR_filebare + '_TasksCompletionTime.txt'))
+        elif(current_scene_file == R3FR_file):
+            file_FR = open(os.path.join(R3FR_path, R3FR_filebare + '_TasksCompletionTime.txt'))
+					
+        if(time_list[0] is None):
+            time_list[0] = scene_time
+            for line in file_FR:
+                FR_Realtime_1 = line
+            file_FR.close()
+            if(current_scene_file == R1FR_file):
+                shutil.copy(os.path.join(R1FR_path, R1FR_filebare + '_TrackingData.txt'), os.path.join(output_path, user_ID + '_' + R1FR_filebare + '_TrackingData.txt'))
+            elif(current_scene_file == R2FR_file):
+                shutil.copy(os.path.join(R2FR_path, R2FR_filebare + '_TrackingData.txt'), os.path.join(output_path, user_ID + '_' + R2FR_filebare + '_TrackingData.txt'))
+            elif(current_scene_file == R3FR_file):
+                shutil.copy(os.path.join(R3FR_path, R3FR_filebare + '_TrackingData.txt'), os.path.join(output_path, user_ID + '_' + R3FR_filebare + '_TrackingData.txt'))
+        else:
+            time_list[1] = scene_time
+            for line in file_FR:
+                FR_Realtime_2 = line
+            file_FR.close()
+            if(current_scene_file == R1FR_file):
+                shutil.copy(os.path.join(R1FR_path, R1FR_filebare + '_TrackingData.txt'), os.path.join(output_path, user_ID + '_' + R1FR_filebare + '_TrackingData_2.txt'))
+            elif(current_scene_file == R2FR_file):
+                shutil.copy(os.path.join(R2FR_path, R2FR_filebare + '_TrackingData.txt'), os.path.join(output_path, user_ID + '_' + R2FR_filebare + '_TrackingData_2.txt'))
+            elif(current_scene_file == R3FR_file):
+                shutil.copy(os.path.join(R3FR_path, R3FR_filebare + '_TrackingData.txt'), os.path.join(output_path, user_ID + '_' + R3FR_filebare + '_TrackingData_2.txt'))
+    #Save the time for the NonFR file
+    else:
+        time_list[2] = scene_time
+
+#Open NonFR file and save the time
+file_NonFR = open(os.path.join(NonFRBuild_path, NonFRBuild_filebare + '_TasksCompletionTime.txt'))
+
+for line in file_NonFR:
+    NonFR_Realtime = line;
+file_NonFR.close()
 
 #Calculate the full study time
 full_study_time = time.time() - full_study_start_time
@@ -267,6 +318,12 @@ full_study_time = round(full_study_time, 2)
 
 now = datetime.datetime.now()
 date = now.strftime("%Y-%m-%d")
+	
+#Rename the created files with the new names and move them to the output folder
+#FIX ME add a check to see if files exist 
+os.rename(os.path.join(read_distance_path, "ReadDistanceBuild_Data\\output\\" + read_distance_filebare + '.csv'), os.path.join(output_path, user_ID + '_' + read_distance_filebare + '.csv'))
+
+shutil.copy(os.path.join(NonFRBuild_path, NonFRBuild_filebare + '_TrackingData.txt'), os.path.join(output_path, user_ID + '_' + NonFRBuild_filebare + '_TrackingData.txt'))
 
 #Create new file to store information about the researcher and times
 with open(output_path + user_ID + "_main" + ".csv", mode='w', newline='') as output_file:
@@ -274,22 +331,7 @@ with open(output_path + user_ID + "_main" + ".csv", mode='w', newline='') as out
 
     output_writer.writerow(['Participant UserID', 'Study Admin', 'Date', 'Scene Order', 'Read Distance Time', 'FR Time One', 'FR Time Two', 'NonFR Time', 'Full Study Time'])
     output_writer.writerow([user_ID, admin_name, date, 'Read Distance Scene,' + scene_order, read_distance_time, time_list[0], time_list[1], time_list[2], full_study_time])
-	
-#Remove the .exe from the path names
-read_distance_file = read_distance_file[:-4]
-NonFRBuild_file = NonFRBuild_file[:-4]
-R1FR_file = R1FR_file[:-4]
-R2FR_file = R2FR_file[:-4]
-R3FR_file = R3FR_file[:-4]
-	
-#Rename the created files with the new names and move them to the output folder
-#FIX ME add a check to see if files exist 
-os.rename(os.path.join(read_distance_path, "ReadDistanceBuild_Data\\output\\" + read_distance_file + '.csv'), os.path.join(output_path, user_ID + '_' + read_distance_file + '.csv'))
-
-shutil.copy(os.path.join(NonFRBuild_path, NonFRBuild_file + '.txt'), os.path.join(output_path, user_ID + '_' + NonFRBuild_file + '.txt'))
-shutil.copy(os.path.join(R1FR_path, R1FR_file + '.txt'), os.path.join(output_path, user_ID + '_' + R1FR_file + '.txt'))
-shutil.copy(os.path.join(R2FR_path, R2FR_file + '.txt'), os.path.join(output_path, user_ID + '_' + R2FR_file + '.txt'))
-shutil.copy(os.path.join(R3FR_path, R3FR_file + '.txt'), os.path.join(output_path, user_ID + '_' + R3FR_file + '.txt'))
+    output_writer.writerow(['', '', '', '', '', FR_Realtime_1, FR_Realtime_2, NonFR_Realtime, ''])
 
 	
 	
