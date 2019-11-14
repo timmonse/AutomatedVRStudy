@@ -273,16 +273,17 @@ while scene_stack:
     if((current_scene_file == R1FR_file) or (current_scene_file == R2FR_file) or (current_scene_file == R3FR_file)):
         #Set the name for the task completetion time file
         if(current_scene_file == R1FR_file):
-            file_FR = open(os.path.join(R1FR_path, R1FR_filebare + '_TasksCompletionTime.txt'))
+            file_FR = open(os.path.join(R1FR_path, R1FR_filebare + '_TasksCompletionTime.txt'), 'r')
         elif(current_scene_file == R2FR_file):
-            file_FR = open(os.path.join(R2FR_path, R2FR_filebare + '_TasksCompletionTime.txt'))
+            file_FR = open(os.path.join(R2FR_path, R2FR_filebare + '_TasksCompletionTime.txt'), 'r')
         elif(current_scene_file == R3FR_file):
-            file_FR = open(os.path.join(R3FR_path, R3FR_filebare + '_TasksCompletionTime.txt'))
+            file_FR = open(os.path.join(R3FR_path, R3FR_filebare + '_TasksCompletionTime.txt'), 'r')
 					
         if(time_list[0] is None):
             time_list[0] = scene_time
-            for line in file_FR:
-                FR_Realtime_1 = line
+            # for line in file_FR:
+                # FR_Realtime_1 = line
+            FR_Realtime_1 = file_FR.read()
             file_FR.close()
             if(current_scene_file == R1FR_file):
                 shutil.copy(os.path.join(R1FR_path, R1FR_filebare + '_TrackingData.txt'), os.path.join(output_path, user_ID + '_' + R1FR_filebare + '_TrackingData.txt'))
@@ -292,8 +293,9 @@ while scene_stack:
                 shutil.copy(os.path.join(R3FR_path, R3FR_filebare + '_TrackingData.txt'), os.path.join(output_path, user_ID + '_' + R3FR_filebare + '_TrackingData.txt'))
         else:
             time_list[1] = scene_time
-            for line in file_FR:
-                FR_Realtime_2 = line
+            # for line in file_FR:
+                # FR_Realtime_2 = line
+            FR_Realtime_2 = file_FR.read()
             file_FR.close()
             if(current_scene_file == R1FR_file):
                 shutil.copy(os.path.join(R1FR_path, R1FR_filebare + '_TrackingData.txt'), os.path.join(output_path, user_ID + '_' + R1FR_filebare + '_TrackingData_2.txt'))
@@ -306,11 +308,16 @@ while scene_stack:
         time_list[2] = scene_time
 
 #Open NonFR file and save the time
-file_NonFR = open(os.path.join(NonFRBuild_path, NonFRBuild_filebare + '_TasksCompletionTime.txt'))
-
-for line in file_NonFR:
-    NonFR_Realtime = line;
+file_NonFR = open(os.path.join(NonFRBuild_path, NonFRBuild_filebare + '_TasksCompletionTime.txt'), 'r')
+# for line in file_NonFR:
+    # NonFR_Realtime = line;
+NonFR_Realtime = file_NonFR.read()
 file_NonFR.close()
+
+file_ReadDistance = open(os.path.join(read_distance_path, "ReadDistanceBuild_Data\\output\\" + read_distance_filebare + '_TasksCompletionTime.txt'), 'r')
+readDistance_Realtime = file_ReadDistance.read()
+print (readDistance_Realtime)
+file_ReadDistance.close()
 
 #Calculate the full study time
 full_study_time = time.time() - full_study_start_time
@@ -319,10 +326,11 @@ full_study_time = round(full_study_time, 2)
 now = datetime.datetime.now()
 date = now.strftime("%Y-%m-%d")
 	
-#Rename the created files with the new names and move them to the output folder
+#Copy and rename the ReadDistanceBuild csv file
 #FIX ME add a check to see if files exist 
-os.rename(os.path.join(read_distance_path, "ReadDistanceBuild_Data\\output\\" + read_distance_filebare + '.csv'), os.path.join(output_path, user_ID + '_' + read_distance_filebare + '.csv'))
+os.rename(os.path.join(read_distance_path, "ReadDistanceBuild_Data\\output\\" + read_distance_file + '.csv'), os.path.join(output_path, user_ID + '_' + read_distance_file + '.csv'))
 
+#Copy and rename the ReadDistanceBuild csv file
 shutil.copy(os.path.join(NonFRBuild_path, NonFRBuild_filebare + '_TrackingData.txt'), os.path.join(output_path, user_ID + '_' + NonFRBuild_filebare + '_TrackingData.txt'))
 
 #Create new file to store information about the researcher and times
@@ -331,7 +339,7 @@ with open(output_path + user_ID + "_main" + ".csv", mode='w', newline='') as out
 
     output_writer.writerow(['Participant UserID', 'Study Admin', 'Date', 'Scene Order', 'Read Distance Time', 'FR Time One', 'FR Time Two', 'NonFR Time', 'Full Study Time'])
     output_writer.writerow([user_ID, admin_name, date, 'Read Distance Scene,' + scene_order, read_distance_time, time_list[0], time_list[1], time_list[2], full_study_time])
-    output_writer.writerow(['', '', '', '', '', FR_Realtime_1, FR_Realtime_2, NonFR_Realtime, ''])
+    output_writer.writerow(['', '', '', '', readDistance_Realtime, FR_Realtime_1, FR_Realtime_2, NonFR_Realtime, ''])
 
 	
 	
